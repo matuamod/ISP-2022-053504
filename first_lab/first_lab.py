@@ -10,7 +10,7 @@ def Get_Parser():
 	args = parser.parse_args()
 	return args.text, args.k, args.n
 
-def Remove_Chars(_data):
+def Remove_Chars(_data : str) -> list:
     chars = "@#%&,;:'()"
     for char in chars:
         _data = _data.replace(char, "")
