@@ -2,95 +2,114 @@ import argparse
 import re
 from statistics import mean, median
 
-def Get_Parser():
+def get_parser() -> tuple:
 	parser = argparse.ArgumentParser(description="Get some values for our lab :")
 	parser.add_argument("text", type = str, help = "Text for some next operations")
 	parser.add_argument("k", nargs = "?", default = 10, type = int, help = "Need some value of k, default = 10")
 	parser.add_argument("n", nargs = "?", default = 4, type = int, help = "Need some value of n, default = 4")
 	args = parser.parse_args()
-	return args.text, args.k, args.n
 
-def Remove_Chars(_data : str) -> list:
+	return (args.text, args.k, args.n)
+
+def remove_chars(data : str) -> list:
     chars = "@#%&,;:'()"
-    for char in chars:
-        _data = _data.replace(char, "")
-    return _data
 
-def Split_Str_To_Arr(_data : str) -> list:
-    _data = Remove_Chars(_data)
+    for char in chars:
+        data = data.replace(char, "")
+
+    return data
+
+def split_str_to_arr(data : str) -> list:
+    data = remove_chars(data)
     sentanses = []
     post_chars = "\\. |\\! |\\?"
-    for sentanse in re.split(post_chars, _data):
+
+    for sentanse in re.split(post_chars, data):
         if len(sentanse) > 0:
             words = sentanse.split(" ")
+
             while "" in words:
                 words.remove("")
             sentanses.append(words)
+
     return sentanses
 
-def Get_Repeating_Words(_sentanses : list) -> dict:
+def get_repeating_words(sentanses : list) -> dict:
     cust_dict = dict()
-    for sentanse in _sentanses:
+
+    for sentanse in sentanses:
+
         for word in sentanse:
             if word in cust_dict:
                 cust_dict[word] += 1
+
             else:
                 cust_dict[word] = 1
+
     return cust_dict
 
-def Average_Amount_Words(_sentanses : list) -> int:
-    average_count = mean([len(sentanse) for sentanse in _sentanses])
+def average_amount_words(sentanses : list) -> int:
+    average_count = mean([len(sentanse) for sentanse in sentanses])
+
     return average_count
 
-def Median_Amount_Words(_sentanses : list) -> int:
-    median_count = median([len(sentanse) for sentanse in _sentanses])
+def median_amount_words(sentanses : list) -> int:
+    median_count = median([len(sentanse) for sentanse in sentanses])
+
     return median_count
 
-def Get_Top_Grams(_sentanses : list, _n : int) -> dict:
+def get_top_grams(sentanses : list, n : int) -> dict:
     grams_dict = dict()
     buf_grams_dict = dict()
-    for sentanse in _sentanses:
+
+    for sentanse in sentanses:
         buf_gram = ""
+
         for i in range(len(sentanse)):
-            if (i + _n) <= len(sentanse):
-                for j in range(_n):
+            if (i + n) <= len(sentanse):
+
+                for j in range(n):
                     buf_gram += str(sentanse[j + i]  + " ").lower()
                 buf_gram = buf_gram.strip()
-
                 if buf_gram in grams_dict:
                     grams_dict[buf_gram] += 1
-                    if grams_dict[buf_gram] >= _n:
+                    if grams_dict[buf_gram] >= n:
                         buf_grams_dict[buf_gram] = grams_dict[buf_gram]
+
                 else:
                     grams_dict[buf_gram] = 1
                 buf_gram = ""
     
     return buf_grams_dict   
 
-def Sorted_Grams(_grams_dict : dict) -> dict:
-    sorted_grams_dict = dict(sorted(_grams_dict.items(), key = lambda kv : kv[1], reverse = True))
+def sorted_grams(grams_dict : dict) -> dict:
+    sorted_grams_dict = dict(sorted(grams_dict.items(), key = lambda kv : kv[1], reverse = True))
+
     return sorted_grams_dict
 
-def Print_All_Inf(_data : str, _sentanses : list, _k : int, _n : int):
-    word_dict = Get_Repeating_Words(_sentanses)
+def Print_All_Inf(data : str, sentanses : list, k : int, n : int):
+    word_dict = get_repeating_words(sentanses)
+
     for word in word_dict:
         print("  |  {} = {}".format(word, word_dict[word]), end= "  |  \n")
-    average_count = Average_Amount_Words(_sentanses)
+    average_count = average_amount_words(sentanses)
     print("\nAverage count of words in text is : " + str(average_count))
-    median_count = Median_Amount_Words(_sentanses)
+    median_count = median_amount_words(sentanses)
     print("\nMedian count of words in text is : " + str(median_count))
-    grams_dict = Get_Top_Grams(_sentanses, _n)
-    sorted_grams_dict = Sorted_Grams(grams_dict)
+    grams_dict = get_top_grams(sentanses, n)
+    sorted_grams_dict = sorted_grams(grams_dict)
     print("\nTop k n-grams are :\n" + " ".join(str(sorted_grams_dict)))
+
     for i, (key, value) in enumerate(sorted_grams_dict.items()):
-        if i == _k:
+        if i == k:
             break
+        
         else:
             print(" "+" {} = {}".format(key, value))
 
 def main():	
-	text, k, n = Get_Parser()
-	sentanses = Split_Str_To_Arr(text)
+	text, k, n = get_parser()
+	sentanses = split_str_to_arr(text)
 	Print_All_Inf(text, sentanses, k, n)
 
 if __name__ == "__main__":
