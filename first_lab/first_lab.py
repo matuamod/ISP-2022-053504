@@ -87,7 +87,7 @@ def sorted_grams(grams_dict : dict) -> dict:
 
     return sorted_grams_dict
 
-def Print_All_Inf(data : str, sentanses : list, k : int, n : int):
+def print_all_inf(data : str, sentanses : list, k : int, n : int):
     word_dict = get_repeating_words(sentanses)
 
     for word in word_dict:
@@ -110,7 +110,7 @@ def Print_All_Inf(data : str, sentanses : list, k : int, n : int):
 def main():	
 	text, k, n = get_parser()
 	sentanses = split_str_to_arr(text)
-	Print_All_Inf(text, sentanses, k, n)
+	print_all_inf(text, sentanses, k, n)
 
 if __name__ == "__main__":
     main()
