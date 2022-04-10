@@ -1,14 +1,20 @@
 from source.serializer.base_serializer.base_serializer import BaseSerializer
+from source.dto.dto import DTO, DTO_TYPE
+import inspect
 
 class JSON_Serializer(BaseSerializer):
     
     _str = ""
+    _parser = None
 
     def __init__(self):
         super().__init__()
 
     def dump(self, obj : any, file_path : str):
-        pass
+        file = open(file_path, "a")
+        _str = self.dumps(obj) 
+        file.write(_str)
+        file.close()
 
     def dumps(self, obj : any) -> str:
         self._str = ""
@@ -16,9 +22,14 @@ class JSON_Serializer(BaseSerializer):
         return self._str
 
     def load(self, file_path : str) -> any:
-        pass
+        obj = None
+        file = open(file_path, "r")
+        _str = file.read()
+        obj = self.loads(_str)
+        return obj
 
-    def loads(self, file_path : str) -> any:
+    def loads(self, s : str) -> any:
+        #return self._parser.parse(s)
         pass
 
     def _add(self, type_str : str):
@@ -28,6 +39,16 @@ class JSON_Serializer(BaseSerializer):
         primitive_types = (int, float, bool, str, tuple, list, bytes)
         if type(obj) in primitive_types:
             self._inspect_primitive_type(obj)
+        elif obj == None:
+            self._add("none")
+        else:
+            self._add("{")
+            if type(obj) == dict:
+                self._inspect_dict_type(obj)
+            elif inspect.isfunction(obj):
+                print(inspect.getsource(obj))
+                print("We founded function!!")
+            self._add("}")
 
     def _inspect_primitive_type(self, prim_obj):
         prim_obj_type = type(prim_obj)
@@ -51,3 +72,19 @@ class JSON_Serializer(BaseSerializer):
                     self._add(',')
                 self._inspect(part_obj)
             self._add(']')
+
+    def _inspect_dict_type(self, dict_obj : dict):
+        self._add(f'"{DTO.dto_type}" : "{DTO_TYPE.dict}"')
+        if len(dict_obj) >= 1:
+            self._add(",")
+            is_first_el = True
+            i = 0
+
+        for item in dict_obj.items():
+            if is_first_el != True:
+                self._add(",")
+            self._add(f'"{item[i]}": {item[i+1]}') # add key and value to _str
+            is_first_el = False
+
+    def _inspect_func_type(self, func_obj):
+        self._add(f'"{DTO.dto_type}" : "{DTO_TYPE.func}"')
