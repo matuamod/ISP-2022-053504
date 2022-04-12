@@ -2,6 +2,8 @@ from sympy import sec
 from source import JSON_Serializer
 import inspect
 
+price = 300
+
 car = "BMW 335i"
 
 cylinders = "6 cylinders"
@@ -26,15 +28,14 @@ dict_spec = {
     "Audi" : 3 
 }
 
-def car_method():
-    a = 15
-    a += 23
-    print("Soft method")
-
+def car_method(v):
+    speed = "Fast"
+    v = price
+    print(v)
+    
 json_serializer = JSON_Serializer()
-
 json_serializer.dump(car_method, "all_data.json")
-#json_serializer.dump(dict_spec, "all_data.json")
+# json_serializer.dump(dict_spec, "all_data.json")
 
 #json_serializer.dump(spec_list, "all_data.json")
 

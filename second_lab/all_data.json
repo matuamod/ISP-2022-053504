@@ -1,1 +1,1 @@
-{}
+{"dto_type": "func", "name": "car_method", "globals": {"dto_type": "dict","price": 300}, "code": {"dto_type": "code", "fields": {"dto_type": "dict","co_argcount": 1,"co_cellvars": {},"co_code": "64017d0174007d0074017c008301010064005300","co_consts": {},"co_firstlineno": 31,"co_flags": 67,"co_freevars": {},"co_kwonlyargcount": 0,"co_lnotab": "000104010401","co_names": {},"co_nlocals": 2,"co_stacksize": 2,"co_varnames": {}}}}
