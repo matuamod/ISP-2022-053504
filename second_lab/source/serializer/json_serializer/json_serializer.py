@@ -46,9 +46,9 @@ class JSON_Serializer(BaseSerializer):
         primitive_types = (int, float, bool, str, bytes)
         if type(obj) in primitive_types:
             self._inspect_primitive_type(obj)
-        elif type(obj) == (tuple, list):
+        elif type(obj) in (tuple, list):
             self._inspect_list_tuple_type(obj)
-        elif type(obj) == NoneType:
+        elif obj == None:
             self._add("null")
         else:
             self._add("{")
@@ -77,12 +77,15 @@ class JSON_Serializer(BaseSerializer):
 
 
     def _inspect_list_tuple_type(self, obj):
-        self._add('[')
-        for part_obj, i in enumerate(obj):
-            if i != 0:
-                self._add(',')
-            self._inspect(part_obj)
-        self._add(']')
+        if(len(obj)) == 0:
+            self._add('[]')
+        else:
+            self._add('[')
+            for i, part_obj in enumerate(obj):
+                if i != 0:
+                    self._add(',')
+                self._inspect(part_obj)
+            self._add(']')
 
 
     def _inspect_dict_type(self, dict_obj : dict):
@@ -143,7 +146,7 @@ class JSON_Serializer(BaseSerializer):
             "co_posonlyagrcount", "co_kwonlyargcount",
             "co_firstlineno", "co_lnotab",
             "co_stacksize", "co_code",
-            "co_consts", "co_flags"
+            "co_consts", "co_flags", "co_filename"
         )
 
         for member in inspect.getmembers(code_obj):
