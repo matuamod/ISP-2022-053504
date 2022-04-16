@@ -1,4 +1,5 @@
 from types import NoneType
+from source.parser.json_parser.json_parser import JSON_Parser
 from source.serializer.base_serializer.base_serializer import BaseSerializer
 from source.dto.dto import DTO, DTO_TYPE
 import inspect
@@ -6,14 +7,15 @@ import inspect
 class JSON_Serializer(BaseSerializer):
     
     _str = ""
-    _parser = None
+    _json_parser = None
 
     def __init__(self):
         super().__init__()
+        self._json_parser = JSON_Parser()
 
 
     def dump(self, obj : any, file_path : str):
-        file = open(file_path, "a")
+        file = open(file_path, "w")
         _str = self.dumps(obj) 
         file.write(_str)
         file.close()
@@ -34,8 +36,8 @@ class JSON_Serializer(BaseSerializer):
 
 
     def loads(self, s : str) -> any:
-        #return self._parser.parse(s)
-        pass
+        return self._json_parser._parse_list(s)
+        # return self._json_parser._parse_prim_types(s)
 
 
     def _add(self, type_str : str):
@@ -105,12 +107,12 @@ class JSON_Serializer(BaseSerializer):
 
 
     def _inspect_func_type(self, func_obj):
-        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.func}", ')
-        self._add(f'"{DTO.name}": "{func_obj.__name__}", ')
+        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.func}",')
+        self._add(f'"{DTO.name}": "{func_obj.__name__}",')
         self._add(f'"{DTO.global_types}": ')
         curr_globals_dict = self._get_globals(func_obj)
         self._inspect(curr_globals_dict)
-        self._add(', ')
+        self._add(',')
         self._get_code(func_obj)
 
 
@@ -130,7 +132,7 @@ class JSON_Serializer(BaseSerializer):
         code_obj = func_obj.__code__
         self._add(f'"{DTO.code}": ')
         self._add('{')
-        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.code}", ')
+        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.code}",')
         self._add(f'"{DTO.fields}": ')
         curr_code_dict = self._get_code_fields(code_obj)
         self._inspect(curr_code_dict)

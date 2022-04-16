@@ -3,7 +3,7 @@ from source import JSON_Serializer
 from source import JSON_Parser
 import inspect
 
-price = 300
+price = b'\x00\x00\x00\x00\x00'
 
 car = "BMW 335i"
 
@@ -35,10 +35,14 @@ def car_method(v):
     print(v)
     
 json_serializer = JSON_Serializer()
-json_serializer.dump(car_method, "all_data.json")
+json_serializer.dump(spec_list, "all_data.json")
+json_string = json_serializer.dumps(spec_list)
+# json_serializer.dump(tuple_spec, "all_data.json")
+# json_string = json_serializer.dumps(tuple_spec)
+buffer = json_serializer.loads(json_string)
+print(buffer)
 
 json_parser = JSON_Parser()
-json_parser.print_smth()
 
 # json_serializer.dump(dict_spec, "all_data.json")
 
