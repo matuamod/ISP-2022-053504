@@ -36,8 +36,7 @@ class JSON_Serializer(BaseSerializer):
 
 
     def loads(self, s : str) -> any:
-        return self._json_parser._parse_list(s)
-        # return self._json_parser._parse_prim_types(s)
+        return self._json_parser._make_parse(s)
 
 
     def _add(self, type_str : str):

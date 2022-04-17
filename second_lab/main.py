@@ -19,7 +19,7 @@ spec_list = [
 
 tuple_spec = (
     4,
-    cylinders,
+    448,
     335
 )
 
@@ -37,10 +37,14 @@ def car_method(v):
 json_serializer = JSON_Serializer()
 json_serializer.dump(spec_list, "all_data.json")
 json_string = json_serializer.dumps(spec_list)
-# json_serializer.dump(tuple_spec, "all_data.json")
-# json_string = json_serializer.dumps(tuple_spec)
 buffer = json_serializer.loads(json_string)
 print(buffer)
+
+# json_serializer.dump(tuple_spec, "all_data.json")
+# json_string = json_serializer.dumps(tuple_spec)
+# buffer = json_serializer.loads(json_string)
+# print(buffer)
+
 
 json_parser = JSON_Parser()
 

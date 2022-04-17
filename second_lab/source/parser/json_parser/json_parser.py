@@ -6,12 +6,14 @@ import re
 
 class JSON_Parser():
 
-    def _make_list(self, json_str : str) -> list:
-        if len(json_str) > 0:
-            for item in parse_arg.items():
-                if item[1] in json_str:
-                    buff_str = re.match(item[1], json_str)
-                    pass
+    def _make_parse(self, parse_str: str):
+        if parse_str[0] == '[':
+            res = self._parse_list(parse_str)
+        elif parse_str[0] == '{':
+            res = self._parse_dto(parse_str)
+        else:
+            res = self._parse_prim_types(parse_str)
+        return res
 
 
     def _parse_prim_types(self, prim_str: str) -> any:
@@ -25,16 +27,23 @@ class JSON_Parser():
             
 
     def _parse_list(self, list_str: str) -> list:
+        buf_list = []
         res_list = []
 
         if '[' in list_str:
-            list_str = re.sub("[^A-Za-z0-9, -]", "", list_str)
-        res_list = re.split(',', list_str)
+            list_str = re.sub('[^A-Za-z0-9," -]', "", list_str)
+        buf_list = re.split(',', list_str)
 
-        for item in res_list:
-            if item == '':
-                res_list.remove(item)
+        for item in buf_list:
+            res_item = self._make_parse(item)
+            res_list.append(res_item)
+            if res_item == '':
+                res_list.remove(res_item)
         return res_list
+
+
+    def _parse_dto(self, dict_str: str) -> dict:
+        pass
         
 
     def _is_number(self, numb_str: str) -> bool:
@@ -62,7 +71,7 @@ class JSON_Parser():
 
             for char in text:
                 chars.append(char)
-            if chars[0] == '"' and chars[len(text) - 1] == '"':
+            if (chars[0] == '"' and chars[len(text) - 1] == '"'):
                 return True
         except ValidationError:
             return False
