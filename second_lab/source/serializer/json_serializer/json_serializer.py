@@ -113,13 +113,14 @@ class JSON_Serializer(BaseSerializer):
         self._inspect(curr_globals_dict)
         self._add(',')
         self._get_code(func_obj)
+        self._add(',')
+        self._add(f'"{DTO.closure}": "{func_obj.__closure__}"')
 
 
     def _get_globals(self, func_obj) -> dict:
         globals_type = func_obj.__globals__
         curr_globals_dict = dict()
         code_obj = func_obj.__code__
-        print(func_obj.__code__.co_names)
 
         for key, value in globals_type.items():
             if key in code_obj.co_names:
@@ -146,7 +147,7 @@ class JSON_Serializer(BaseSerializer):
             "co_cellvars", "co_freevars",
             "co_posonlyagrcount", "co_kwonlyargcount",
             "co_firstlineno", "co_lnotab",
-            "co_stacksize", "co_code",
+            "co_stacksize", "co_code", "co_name",
             "co_consts", "co_flags", "co_filename"
         )
 

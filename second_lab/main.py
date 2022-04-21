@@ -2,8 +2,10 @@ from sympy import sec
 from source import JSON_Serializer
 from source import JSON_Parser
 import inspect
+import toml
+import yaml
 
-price = b'\x00\x00\x00\x00\x00'
+price = 3000343
 
 car = "BMW 335i"
 
@@ -24,9 +26,9 @@ tuple_spec = (
 )
 
 dict_spec = {
-    "BMW" : 1,
-    "Mercedes_Benz" : 2,
-    "Audi" : 3 
+    "BMW": 1,
+    "Mercedes-Benz": 2,
+    "Audi": 3 
 }
 
 def car_method(v):
@@ -35,18 +37,14 @@ def car_method(v):
     print(v)
     
 json_serializer = JSON_Serializer()
-json_serializer.dump(spec_list, "all_data.json")
-json_string = json_serializer.dumps(spec_list)
-buffer = json_serializer.loads(json_string)
+json_serializer.dump(car_method, "all_data.json")
+buffer = json_serializer.load("all_data.json")
 print(buffer)
 
 # json_serializer.dump(tuple_spec, "all_data.json")
 # json_string = json_serializer.dumps(tuple_spec)
 # buffer = json_serializer.loads(json_string)
 # print(buffer)
-
-
-json_parser = JSON_Parser()
 
 # json_serializer.dump(dict_spec, "all_data.json")
 

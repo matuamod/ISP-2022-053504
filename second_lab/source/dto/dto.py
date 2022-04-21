@@ -7,6 +7,7 @@ class DTO():
     code = "code"
     fields = "fields"
     global_types = "globals"
+    closure = "closure"
 
 @dataclass
 class DTO_TYPE():

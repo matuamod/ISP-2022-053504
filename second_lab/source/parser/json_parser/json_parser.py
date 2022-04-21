@@ -42,9 +42,45 @@ class JSON_Parser():
         return res_list
 
 
-    def _parse_dto(self, dict_str: str) -> dict:
-        pass
+    def _parse_dto(self, dto_str: str) -> list:
+        dto_list = []
+
+        if dto_str[0] == '{':
+            dto_str = dto_str[1 : -1]
+            dto_str = dto_str.replace(' ', '')
+        dto_list = re.split(',', dto_str)
+        if "dict" in dto_list[0]:
+            dto = self._parse_dict(dto_str)
+        elif "func" in dto_list[0]:
+            self._parse_func(dto_str)
+            dto = 0
+        return dto
+
+
+    def _parse_dict(self, dict_str: str) -> dict:
+        dict_list = re.split(',', dict_str)
+        dict_list.pop(0)
+        dict_elem_list = []
+        i = 0
+        res_dict = {}
         
+        for elem in dict_list:
+            dict_elem_list.append(re.split(':', elem))
+
+            for j in range(2):
+                if j == 0:
+                    key = self._make_parse(dict_elem_list[i][j])
+                elif j == 1:
+                    value = self._make_parse(dict_elem_list[i][j])
+                    res_dict[key] = value
+            i += 1
+        return res_dict
+
+
+    def _parse_func(self, func_str: str):
+        print(func_str)
+        
+
 
     def _is_number(self, numb_str: str) -> bool:
         try:
