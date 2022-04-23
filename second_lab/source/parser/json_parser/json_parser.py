@@ -1,113 +1,156 @@
-from jsonschema import ValidationError
-from sympy import false
-from source.dto.dto import DTO, DTO_TYPE
-from source.parser.parse_arguments.parse_arguments import parse_arg
 import re
+from source.dto.dto import DTO_TYPE, DTO
+from source.parser.parse_arguments import parse_arguments
+
 
 class JSON_Parser():
 
-    def _make_parse(self, parse_str: str):
-        if parse_str[0] == '[':
-            res = self._parse_list(parse_str)
-        elif parse_str[0] == '{':
-            res = self._parse_dto(parse_str)
-        else:
-            res = self._parse_prim_types(parse_str)
-        return res
+    _arg_dict = parse_arguments
 
 
-    def _parse_prim_types(self, prim_str: str) -> any:
-        if self._is_bool(prim_str):
-            return (True if prim_str == 'true' else False)
-        elif self._is_text_or_byte(prim_str):
-            prim_str = prim_str.replace('"', '')
-            return (prim_str if not prim_str.isdigit() else bytes.fromhex(prim_str))
-        elif self._is_number(prim_str):
-            return (int(prim_str) if prim_str.isdigit() else float(prim_str))
-            
+    def _get_arg_dict(self) -> dict:
+        return self._arg_dict
 
-    def _parse_list(self, list_str: str) -> list:
-        buf_list = []
+
+    def _change_arg_list(self, arg_type: tuple, arg_list: list, get_value: bool = False) -> list:
+        if len(arg_list) > 0:
+            if arg_type in arg_list:
+                arg_list.pop(0)
+            return(arg_list if get_value == False else (arg_list, arg_type))
+
+
+    def _get_parse_arg(self, json_str: str) -> list:
+        json_str = json_str.replace(" ", "")
+        arg_dict = self._get_arg_dict()
+        arguments = []
+
+        while len(json_str) > 0:
+
+            for argument in arg_dict.parse_arg.items():
+                try:
+                    expr = re.match(argument[1], json_str)
+                    if expr.start() == 0:
+                        json_str = json_str[0: expr.start():] + \
+                            json_str[expr.end()::]
+                        # print("Deleted argument is : " + str(expr.group()))
+                        if argument[0] == arg_dict.number:
+                            number = float(expr.group()) if "." in expr.group() else int(
+                                expr.group())
+                            arguments.append((argument[0], number))
+                        elif argument[0] == arg_dict.bool_arg:
+                            boolean = True if expr.group() == "true" else False
+                            arguments.append((argument[0], boolean))
+                        elif argument[0] == arg_dict.str_arg:
+                            arguments.append(
+                                (argument[0], expr.group().replace('"', '')))
+                        elif argument[0] == arg_dict.none:
+                            arguments.append((argument[0], None))
+                        else:
+                            arguments.append((argument[0],))
+                except:
+                    None
+        return arguments
+
+
+    def _get_first_arg(self, arg_list: dict) -> any:
+        return (arg_list[0] if len(arg_list) > 0 else None)
+
+
+    def _parse_prim_types(self, arg_list: list) -> any:
+        res_prim = None
+        arg_dict = self._get_arg_dict()
+        parse_prim = self._get_first_arg(arg_list)
+        prim_parse_tuple = (arg_dict.number, arg_dict.str_arg,
+                            arg_dict.bool_arg, arg_dict.none)
+        if parse_prim[0] in prim_parse_tuple:
+            result = parse_prim[1]
+            if parse_prim[0] in arg_dict.str_arg:
+                if result.isdigit():
+                    result = bytes.fromhex(result)
+            arg_list = self._change_arg_list(parse_prim, arg_list)
+            return result
+
+
+    def _parse_list_tuple(self, arg_list: list) -> list:
         res_list = []
+        arg_dict = self._get_arg_dict()
+        parse_list_item = self._get_first_arg(arg_list)
+        if parse_list_item[0] in arg_dict.right_bracket:
+            arg_list = self._change_arg_list(parse_list_item, arg_list)
 
-        if '[' in list_str:
-            list_str = re.sub('[^A-Za-z0-9," -]', "", list_str)
-        buf_list = re.split(',', list_str)
+            while self._get_first_arg(arg_list)[0] != arg_dict.left_bracket:
+                if self._get_first_arg(arg_list)[0] == arg_dict.comma:
+                    arg_list = self._change_arg_list(
+                        self._get_first_arg(arg_list), arg_list)
+                res_list.append(self._make_parse(arg_list))
 
-        for item in buf_list:
-            res_item = self._make_parse(item)
-            res_list.append(res_item)
-            if res_item == '':
-                res_list.remove(res_item)
+            arg_list = self._change_arg_list(parse_list_item, arg_list)
         return res_list
 
 
-    def _parse_dto(self, dto_str: str) -> list:
-        dto_list = []
+    def _get_dto_name(self, arg_list: list) -> str:
+        dto_names = ('dict', 'func', 'class',
+                     'code', 'module', 'obj')
 
-        if dto_str[0] == '{':
-            dto_str = dto_str[1 : -1]
-            dto_str = dto_str.replace(' ', '')
-        dto_list = re.split(',', dto_str)
-        if "dict" in dto_list[0]:
-            dto = self._parse_dict(dto_str)
-        elif "func" in dto_list[0]:
-            self._parse_func(dto_str)
-            dto = 0
-        return dto
+        for count in range(4):
+            argument = self._get_first_arg(arg_list)
+            if argument[0] == 'str' and argument[1] in dto_names:
+                dto_name = argument[1]
+            arg_list = self._change_arg_list(argument, arg_list)
+        argument = self._get_first_arg(arg_list)
+        return (arg_list, dto_name)
 
 
-    def _parse_dict(self, dict_str: str) -> dict:
-        dict_list = re.split(',', dict_str)
-        dict_list.pop(0)
-        dict_elem_list = []
-        i = 0
+    def _parse_dto(self, arg_list: list) -> any:
+        arg_list = self._change_arg_list(
+            self._get_first_arg(arg_list), arg_list)
+        arg_list, dto_type = self._get_dto_name(arg_list)
+        if dto_type == DTO_TYPE.dict:
+            arg_list, result = self._parse_dict(arg_list)
+        if dto_type == DTO_TYPE.func:
+            arg_list, result = self._parse_func(arg_list)
+        return result
+
+
+    def _parse_dict(self, arg_list: list) -> dict:
         res_dict = {}
-        
-        for elem in dict_list:
-            dict_elem_list.append(re.split(':', elem))
 
-            for j in range(2):
-                if j == 0:
-                    key = self._make_parse(dict_elem_list[i][j])
-                elif j == 1:
-                    value = self._make_parse(dict_elem_list[i][j])
-                    res_dict[key] = value
-            i += 1
-        return res_dict
-
-
-    def _parse_func(self, func_str: str):
-        print(func_str)
-        
-
-
-    def _is_number(self, numb_str: str) -> bool:
-        try:
-            if float(numb_str):
-                return True
-            elif int(numb_str):
-                return True
-        except ValidationError:
-            return False
+        while self._get_first_arg(arg_list)[0] != self._arg_dict.left_brace:
+            if len(self._get_first_arg(arg_list)) == 2:
+                arg_list, dict_key = self._change_arg_list(
+                    self._get_first_arg(arg_list), arg_list, get_value=True)
+                arg_list = self._change_arg_list(
+                    self._get_first_arg(arg_list), arg_list)
+                arg_list, dict_value = self._change_arg_list(
+                    self._get_first_arg(arg_list), arg_list, get_value=True)
+                if self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
+                    arg_list = self._change_arg_list(
+                        self._get_first_arg(arg_list), arg_list)
+            key = self._make_parse([dict_key])
+            value = self._make_parse([dict_value])
+            res_dict[key] = value
+        arg_list = self._change_arg_list(
+            self._get_first_arg(arg_list), arg_list)
+        return (arg_list, res_dict)
 
 
-    def _is_bool(self, bool_str: str) -> bool:
-        try:
-            bool_tuple = ('true', 'false')
-            if bool_str in bool_tuple:
-                return True
-        except ValidationError:
-            return False
-            
+    def _parse_func(self, arg_list: list) -> any:
+        print("Hello world")
+        result = 0
+        return (arg_list, result)
 
-    def _is_text_or_byte(self, text: str) -> bool:
-        try:
-            chars = []
 
-            for char in text:
-                chars.append(char)
-            if (chars[0] == '"' and chars[len(text) - 1] == '"'):
-                return True
-        except ValidationError:
-            return False
+    def _make_parse(self, arg_list: list) -> any:
+        argument = self._get_first_arg(arg_list)
+        if argument[0] == self._arg_dict.right_brace:
+            result = self._parse_dto(arg_list)
+        elif argument[0] == self._arg_dict.right_bracket:
+            result = self._parse_list_tuple(arg_list)
+        else:
+            result = self._parse_prim_types(arg_list)
+        return result
+
+
+    def _parse(self, json_str: str) -> any:
+        arg_list = self._get_parse_arg(json_str)
+        return self._make_parse(arg_list)

@@ -5,6 +5,8 @@ import inspect
 import toml
 import yaml
 
+chip = b'\x00\x00\x00\x00\x00'
+
 price = 3000343
 
 car = "BMW 335i"
@@ -12,6 +14,10 @@ car = "BMW 335i"
 cylinders = "6 cylinders"
 
 power = 400.76
+
+xdrive = False
+
+touring = None
 
 spec_list = [
     "n54",

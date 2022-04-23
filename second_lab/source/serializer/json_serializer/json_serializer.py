@@ -4,30 +4,32 @@ from source.serializer.base_serializer.base_serializer import BaseSerializer
 from source.dto.dto import DTO, DTO_TYPE
 import inspect
 
+
 class JSON_Serializer(BaseSerializer):
-    
+
     _str = ""
     _json_parser = None
+ 
 
     def __init__(self):
         super().__init__()
         self._json_parser = JSON_Parser()
 
 
-    def dump(self, obj : any, file_path : str):
+    def dump(self, obj: any, file_path: str):
         file = open(file_path, "w")
-        _str = self.dumps(obj) 
+        _str = self.dumps(obj)
         file.write(_str)
         file.close()
 
 
-    def dumps(self, obj : any) -> str:
+    def dumps(self, obj: any) -> str:
         self._str = ""
         self._inspect(obj)
         return self._str
 
 
-    def load(self, file_path : str) -> any:
+    def load(self, file_path: str) -> any:
         obj = None
         file = open(file_path, "r")
         _str = file.read()
@@ -35,11 +37,11 @@ class JSON_Serializer(BaseSerializer):
         return obj
 
 
-    def loads(self, s : str) -> any:
-        return self._json_parser._make_parse(s)
+    def loads(self, s: str) -> any:
+        return self._json_parser._parse(s)
 
 
-    def _add(self, type_str : str):
+    def _add(self, type_str: str):
         self._str += type_str
 
 
@@ -89,7 +91,7 @@ class JSON_Serializer(BaseSerializer):
             self._add(']')
 
 
-    def _inspect_dict_type(self, dict_obj : dict):
+    def _inspect_dict_type(self, dict_obj: dict):
         self._add(f'"{DTO.dto_type}": "{DTO_TYPE.dict}"')
         if len(dict_obj) >= 1:
             self._add(",")
@@ -138,7 +140,7 @@ class JSON_Serializer(BaseSerializer):
         self._inspect(curr_code_dict)
         self._add('}')
 
-    
+
     def _get_code_fields(self, code_obj) -> dict:
         curr_code_dict = dict()
         variables = (
