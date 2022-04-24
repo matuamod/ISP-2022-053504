@@ -7,7 +7,7 @@ import yaml
 
 chip = b'\x00\x00\x00\x00\x00'
 
-price = 3000343
+price = 300
 
 car = "BMW 335i"
 
@@ -39,13 +39,13 @@ dict_spec = {
 
 def car_method(v):
     speed = "Fast"
-    v = price
+    v = price + 200
     print(v)
     
 json_serializer = JSON_Serializer()
 json_serializer.dump(car_method, "all_data.json")
 buffer = json_serializer.load("all_data.json")
-print(buffer)
+buffer(335)
 
 # json_serializer.dump(tuple_spec, "all_data.json")
 # json_string = json_serializer.dumps(tuple_spec)

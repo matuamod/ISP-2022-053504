@@ -147,7 +147,7 @@ class JSON_Serializer(BaseSerializer):
             "co_nlocals", "co_argcount",
             "co_varnames", "co_names",
             "co_cellvars", "co_freevars",
-            "co_posonlyagrcount", "co_kwonlyargcount",
+            "co_posonlyargcount", "co_kwonlyargcount",
             "co_firstlineno", "co_lnotab",
             "co_stacksize", "co_code", "co_name",
             "co_consts", "co_flags", "co_filename"

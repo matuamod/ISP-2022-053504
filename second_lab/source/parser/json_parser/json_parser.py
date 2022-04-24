@@ -1,6 +1,7 @@
 import re
 from source.dto.dto import DTO_TYPE, DTO
 from source.parser.parse_arguments import parse_arguments
+from types import CodeType, FunctionType, ModuleType
 
 
 class JSON_Parser():
@@ -17,6 +18,13 @@ class JSON_Parser():
             if arg_type in arg_list:
                 arg_list.pop(0)
             return(arg_list if get_value == False else (arg_list, arg_type))
+
+
+    def _change_arg_list_fast(self, arg_type: tuple, arg_list: list, count: int) -> list:
+        for i in range(count):
+            arg_list = self._change_arg_list(
+                self._get_first_arg(arg_list), arg_list)
+        return arg_list
 
 
     def _get_parse_arg(self, json_str: str) -> list:
@@ -84,8 +92,9 @@ class JSON_Parser():
                         self._get_first_arg(arg_list), arg_list)
                 res_list.append(self._make_parse(arg_list))
 
-            arg_list = self._change_arg_list(parse_list_item, arg_list)
-        return res_list
+            arg_list = self._change_arg_list(
+                self._get_first_arg(arg_list), arg_list)
+        return (arg_list, res_list)
 
 
     def _get_dto_name(self, arg_list: list) -> str:
@@ -107,50 +116,108 @@ class JSON_Parser():
         arg_list, dto_type = self._get_dto_name(arg_list)
         if dto_type == DTO_TYPE.dict:
             arg_list, result = self._parse_dict(arg_list)
-        if dto_type == DTO_TYPE.func:
+        elif dto_type == DTO_TYPE.func:
             arg_list, result = self._parse_func(arg_list)
-        return result
+        return (arg_list, result)
 
 
     def _parse_dict(self, arg_list: list) -> dict:
         res_dict = {}
+        # print(arg_list)
 
         while self._get_first_arg(arg_list)[0] != self._arg_dict.left_brace:
             if len(self._get_first_arg(arg_list)) == 2:
                 arg_list, dict_key = self._change_arg_list(
                     self._get_first_arg(arg_list), arg_list, get_value=True)
+                key = self._make_parse([dict_key])
                 arg_list = self._change_arg_list(
                     self._get_first_arg(arg_list), arg_list)
-                arg_list, dict_value = self._change_arg_list(
-                    self._get_first_arg(arg_list), arg_list, get_value=True)
+                if self._get_first_arg(arg_list)[0] != self._arg_dict.right_bracket:
+                    arg_list, dict_value = self._change_arg_list(
+                        self._get_first_arg(arg_list), arg_list, get_value=True)
+                    value = self._make_parse([dict_value])
+                else:
+                    arg_list, value = self._make_parse(arg_list)
+                    # print(arg_list)
                 if self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
                     arg_list = self._change_arg_list(
                         self._get_first_arg(arg_list), arg_list)
-            key = self._make_parse([dict_key])
-            value = self._make_parse([dict_value])
             res_dict[key] = value
-        arg_list = self._change_arg_list(
-            self._get_first_arg(arg_list), arg_list)
+        while self._get_first_arg(arg_list)[0] == self._arg_dict.left_brace:
+            arg_list = self._change_arg_list(
+                self._get_first_arg(arg_list), arg_list)
         return (arg_list, res_dict)
 
 
+    def _parse_func_name(self, arg_list: list) -> str:
+        arg_list = self._change_arg_list_fast(
+            self._get_first_arg(arg_list), arg_list, 2)
+        arg_list, tuple_name = self._change_arg_list(
+            self._get_first_arg(arg_list), arg_list, get_value=True)
+        arg_list = self._change_arg_list_fast(
+            self._get_first_arg(arg_list), arg_list, 1)
+        func_name = self._make_parse([tuple_name])
+        return (arg_list, func_name)
+
+
+    def _parse_func_globals(self, arg_list: list) -> dict:
+        arg_list = self._change_arg_list_fast(
+            self._get_first_arg(arg_list), arg_list, 2)
+        arg_list, res_dict = self._make_parse(arg_list)
+        return (arg_list, res_dict)
+
+
+    def _parse_func_code(self, arg_list: list) -> CodeType:
+        arg_list = self._change_arg_list_fast(
+            self._get_first_arg(arg_list), arg_list, 10)
+        arg_list, code_dict = self._make_parse(arg_list)
+        print(code_dict)
+
+        res_code = CodeType(
+            code_dict["co_argcount"], code_dict["co_posonlyargcount"],
+            code_dict["co_kwonlyargcount"], code_dict["co_nlocals"],
+            code_dict["co_stacksize"], code_dict["co_flags"],
+            bytes.fromhex(code_dict["co_code"]), tuple(code_dict["co_consts"]),
+            tuple(code_dict["co_names"]), tuple(code_dict["co_varnames"]),
+            code_dict["co_filename"], code_dict["co_name"],
+            code_dict["co_firstlineno"], code_dict["co_lnotab"],
+            tuple(code_dict["co_freevars"]), tuple(code_dict["co_cellvars"]),
+        )
+        return (arg_list, res_code)
+
+
     def _parse_func(self, arg_list: list) -> any:
-        print("Hello world")
-        result = 0
-        return (arg_list, result)
+        argument = self._get_first_arg(arg_list)
+        if argument[1] == DTO.name:
+            arg_list, func_name = self._parse_func_name(arg_list)
+            arg_list, func_globals = self._parse_func_globals(arg_list)
+            arg_list, func_code = self._parse_func_code(arg_list)
+            arg_list = self._change_arg_list_fast(
+                self._get_first_arg(arg_list), arg_list, 3)
+            arg_list, buf_closure = self._change_arg_list(
+                self._get_first_arg(arg_list), arg_list, get_value=True)
+            arg_list = self._change_arg_list_fast(
+                self._get_first_arg(arg_list), arg_list, 1)
+            func_closure = self._make_parse(buf_closure)
+        res_func = FunctionType(func_code, func_globals,
+                                func_name, func_closure)
+        res_func.__globals__["__builtins__"] = __import__("builtins")
+        return (arg_list, res_func)
 
 
     def _make_parse(self, arg_list: list) -> any:
         argument = self._get_first_arg(arg_list)
         if argument[0] == self._arg_dict.right_brace:
-            result = self._parse_dto(arg_list)
+            arg_list, result = self._parse_dto(arg_list)
         elif argument[0] == self._arg_dict.right_bracket:
-            result = self._parse_list_tuple(arg_list)
+            arg_list, result = self._parse_list_tuple(arg_list)
         else:
             result = self._parse_prim_types(arg_list)
-        return result
+        return ((arg_list, result) if argument[0] == self._arg_dict.right_brace or\
+                        argument[0] == self._arg_dict.right_bracket else result)
 
 
     def _parse(self, json_str: str) -> any:
         arg_list = self._get_parse_arg(json_str)
-        return self._make_parse(arg_list)
+        arg_list, result = self._make_parse(arg_list)
+        return result
