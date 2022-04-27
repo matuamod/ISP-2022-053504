@@ -41,11 +41,49 @@ def car_method(v):
     speed = "Fast"
     v = price + 200
     print(v)
+
+class BMW_Group():
+
+    def __init__(self, country: str, city: str):
+        self.country = country
+        self.city = city
     
+    db = 1916
+
+    models = [
+        "1-series", "3-series", 
+        "5-series", "7-series"
+    ]
+
+    def buy_car(self, car_type: str):
+        if car_type == self.models[0]:
+            price = 45000
+        elif car_type == self.models[1]:
+            price = 55000
+        elif car_type == self.models[2]:
+            price = 70000
+        elif car_type == self.models[3]:
+            price = 95000
+        else:
+            print("No such car in autohaus")
+            price = 0
+        return (car_type, price)
+
+    def get_bought_car(self, car_type: str, price: int):
+        if price > 0:
+            print(f"New customer bought {car_type} for {price}")
+        else:
+            print("Choose correct car please")
+
+class Dog():
+    # name = "Cherry"
+    pass
+
 json_serializer = JSON_Serializer()
-json_serializer.dump(car_method, "all_data.json")
+json_serializer.dump(Dog, "all_data.json")
 buffer = json_serializer.load("all_data.json")
-buffer(335)
+# autoidea = BMW_Group("Germany", "Munich")
+# autoidea.buy_car("3-series")
 
 # json_serializer.dump(tuple_spec, "all_data.json")
 # json_string = json_serializer.dumps(tuple_spec)

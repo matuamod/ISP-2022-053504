@@ -1,4 +1,5 @@
-from types import NoneType
+# from locale import D_FMT
+from types import NoneType, WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, MappingProxyType, GetSetDescriptorType
 from source.parser.json_parser.json_parser import JSON_Parser
 from source.serializer.base_serializer.base_serializer import BaseSerializer
 from source.dto.dto import DTO, DTO_TYPE
@@ -59,6 +60,10 @@ class JSON_Serializer(BaseSerializer):
                 self._inspect_dict_type(obj)
             elif inspect.isfunction(obj):
                 self._inspect_func_type(obj)
+            elif inspect.isclass(obj):
+                self._inspect_class_type(obj)
+            elif isinstance(obj, object):
+                self._inspect_obj_type(obj)
             self._add("}")
 
 
@@ -157,3 +162,44 @@ class JSON_Serializer(BaseSerializer):
             if member[0] in variables:
                 curr_code_dict.update({member[0]: member[1]})
         return curr_code_dict
+
+
+    def _inspect_class_type(self, class_obj):
+        fields_dict = self._get_class_fields(class_obj)
+        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.class_type}",')
+        self._add(f'"{DTO.name}": "{class_obj.__name__}",')
+        self._add(f'"{DTO.fields}": ')
+        self._inspect(fields_dict)
+
+
+    def _get_class_fields(self, class_obj) -> dict:
+        fields_dict = dict()
+        if class_obj == type:
+            fields_dict["__bases__"] = []
+        else:
+            members = inspect.getmembers(class_obj)
+
+            for member in members:
+                if type(member[1]) not in (
+                    WrapperDescriptorType,
+                    MethodDescriptorType,
+                    BuiltinFunctionType,
+                    MappingProxyType,
+                    GetSetDescriptorType
+                ) and member[0] not in (
+                    "__mro__", "__base__", "__basicsize__",
+                    "__class__", "__dictoffset__", "__name__",
+                    "__qualname__", "__text_signature__", "__itemsize__",
+                    "__flags__", "__weakrefoffset__"
+                ):
+                    fields_dict[member[0]] = member[1]
+        return fields_dict
+
+
+    def _inspect_obj_type(self, obj):
+        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.obj_type}",')
+        self._add(f'"{DTO.base_class}": ')
+        self._inspect(obj.__class__)
+        self._add(",")
+        self._add(f'"{DTO.fields}": ')
+        self._inspect(obj.__dict__)
