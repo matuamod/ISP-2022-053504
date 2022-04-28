@@ -1,9 +1,12 @@
 # from locale import D_FMT
-from types import NoneType, WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, MappingProxyType, GetSetDescriptorType
+from modulefinder import Module
+from types import NoneType, WrapperDescriptorType, MethodDescriptorType, BuiltinFunctionType, MappingProxyType, GetSetDescriptorType, ModuleType
 from source.parser.json_parser.json_parser import JSON_Parser
 from source.serializer.base_serializer.base_serializer import BaseSerializer
 from source.dto.dto import DTO, DTO_TYPE
 import inspect
+import sys
+import imp
 
 
 class JSON_Serializer(BaseSerializer):
@@ -64,6 +67,8 @@ class JSON_Serializer(BaseSerializer):
                 self._inspect_class_type(obj)
             elif isinstance(obj, object):
                 self._inspect_obj_type(obj)
+            elif type(obj) == ModuleType:
+                self._inspect_obj_module(obj)
             self._add("}")
 
 
@@ -203,3 +208,35 @@ class JSON_Serializer(BaseSerializer):
         self._add(",")
         self._add(f'"{DTO.fields}": ')
         self._inspect(obj.__dict__)
+
+
+    def _inspect_obj_module(self, obj_module):
+        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.model}",')
+        self._add(f'"{DTO.name}": "{obj_module.__name__}",')
+        self._add(f'"{DTO.fields}": ')
+        if self._is_std_module(obj_module):
+            self._inspect(None)
+        else:
+            module_fields = self._get_module_fields(obj_module)
+            self._inspect(module_fields)
+
+
+    def _get_module_fields(self, obj_module: ModuleType) -> dict:
+        module_fields = {}
+        for member in inspect.getmembers(obj_module):
+            if not member[0].startswith("__"):
+                module_fields[member[0]] = member[1]
+        return module_fields
+
+
+    def is_std_lib_module(self, obj_module: ModuleType):
+        libs_path = sys.path[2]
+        module_path = imp.find_module(obj_module.__name__)[1]
+        if obj_module.__name__ in sys.builtin_module_names:
+            return True
+        elif libs_path in module_path:
+            return True
+        elif "site-packages" in module_path:
+            return True
+        else:
+            return False

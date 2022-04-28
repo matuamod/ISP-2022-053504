@@ -1,4 +1,6 @@
 import re
+
+from attr import fields_dict
 from source.dto.dto import DTO_TYPE, DTO
 from source.parser.parse_arguments import parse_json_arguments
 from types import CodeType, FunctionType, ModuleType
@@ -8,8 +10,10 @@ class JSON_Parser():
 
     _arg_dict = parse_json_arguments
 
+
     def _get_arg_dict(self) -> dict:
         return self._arg_dict
+
 
     def _change_arg_list(self, arg_type: tuple, arg_list: list, get_value: bool = False) -> list:
         if len(arg_list) > 0:
@@ -17,12 +21,14 @@ class JSON_Parser():
                 arg_list.pop(0)
             return(arg_list if get_value == False else (arg_list, arg_type))
 
-    def _change_arg_list_fast(self, arg_type: tuple, arg_list: list, count: int) -> list:
-        for i in range(count):
-            arg_list = self._change_arg_list(# import this
 
+    def _change_arg_list_fast(self, arg_type: tuple, arg_list: list, count: int) -> list:
+
+        for i in range(count):
+            arg_list = self._change_arg_list(  # import this
                 self._get_first_arg(arg_list), arg_list)
         return arg_list
+
 
     def _get_parse_arg(self, json_str: str) -> list:
         json_str = json_str.replace(" ", "")
@@ -56,8 +62,10 @@ class JSON_Parser():
                     None
         return arguments
 
+
     def _get_first_arg(self, arg_list: dict) -> any:
         return (arg_list[0] if len(arg_list) > 0 else None)
+
 
     def _parse_prim_types(self, arg_list: list) -> any:
         res_prim = None
@@ -71,8 +79,8 @@ class JSON_Parser():
             #     if result.isdigit():
             #         result = bytes.fromhex(result)
             arg_list = self._change_arg_list(parse_prim, arg_list)
-            # print(result)
             return result
+
 
     def _parse_list_tuple(self, arg_list: list) -> list:
         res_list = []
@@ -91,21 +99,22 @@ class JSON_Parser():
                 self._get_first_arg(arg_list), arg_list)
         return (arg_list, res_list)
 
+
     def _get_dto_name(self, arg_list: list) -> str:
         dto_names = ('dict', 'func', 'type',
                      'code', 'module', 'obj')
 
         for count in range(4):
             argument = self._get_first_arg(arg_list)
-            # print(argument)
             if argument[0] == 'str' and argument[1] in dto_names:
                 dto_name = argument[1]
             if argument[0] != self._arg_dict.left_brace:
-                 arg_list = self._change_arg_list(argument, arg_list)
+                arg_list = self._change_arg_list(argument, arg_list)
             else:
                 return (arg_list, dto_name)
         argument = self._get_first_arg(arg_list)
         return (arg_list, dto_name)
+
 
     def _parse_dto(self, arg_list: list) -> any:
         arg_list = self._change_arg_list(
@@ -117,11 +126,13 @@ class JSON_Parser():
             arg_list, result = self._parse_func(arg_list)
         elif dto_type == DTO_TYPE.class_type:
             arg_list, result = self._parse_class(arg_list)
+        elif dto_type == DTO_TYPE.obj_type:
+            arg_list, result = self._parse_obj(arg_list)
         return (arg_list, result)
+
 
     def _parse_dict(self, arg_list: list) -> dict:
         res_dict = {}
-        # print(arg_list)
 
         while self._get_first_arg(arg_list)[0] != self._arg_dict.left_brace:
             # print(self._get_first_arg(arg_list)[0], self._get_first_arg(arg_list)[1])
@@ -129,7 +140,6 @@ class JSON_Parser():
                 arg_list, dict_key = self._change_arg_list(
                     self._get_first_arg(arg_list), arg_list, get_value=True)
                 key = self._make_parse([dict_key])
-                # print(key)
                 arg_list = self._change_arg_list(
                     self._get_first_arg(arg_list), arg_list)
                 if self._get_first_arg(arg_list)[0] != self._arg_dict.right_bracket\
@@ -137,25 +147,24 @@ class JSON_Parser():
                     arg_list, dict_value = self._change_arg_list(
                         self._get_first_arg(arg_list), arg_list, get_value=True)
                     value = self._make_parse([dict_value])
-                    # print(value)
                 else:
                     arg_list, value = self._make_parse(arg_list)
-                    # print(value)
                 if self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
                     arg_list = self._change_arg_list(
                         self._get_first_arg(arg_list), arg_list)
                 res_dict[key] = value
-                print(res_dict)
             elif self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
                 arg_list = self._change_arg_list(
                     self._get_first_arg(arg_list), arg_list)
-        
-        while self._get_first_arg(arg_list)[0] == self._arg_dict.left_brace:
+
+        while len(arg_list) >= 1 and self._get_first_arg(arg_list)[0] == self._arg_dict.left_brace:
             arg_list = self._change_arg_list(
                 self._get_first_arg(arg_list), arg_list)
-        # print(res_dict)
-        # print(arg_list)
+        if len(arg_list) == 1:
+            arg_list = self._change_arg_list(
+                self._get_first_arg(arg_list), arg_list)
         return (arg_list, res_dict)
+
 
     def _parse_func_name(self, arg_list: list) -> str:
         arg_list = self._change_arg_list_fast(
@@ -167,11 +176,13 @@ class JSON_Parser():
         func_name = self._make_parse([tuple_name])
         return (arg_list, func_name)
 
+
     def _parse_func_globals(self, arg_list: list) -> dict:
         arg_list = self._change_arg_list_fast(
             self._get_first_arg(arg_list), arg_list, 2)
         arg_list, res_dict = self._make_parse(arg_list)
         return (arg_list, res_dict)
+
 
     def _parse_func_code(self, arg_list: list) -> CodeType:
         arg_list = self._change_arg_list_fast(
@@ -190,6 +201,7 @@ class JSON_Parser():
         )
         return (arg_list, res_code)
 
+
     def _parse_func(self, arg_list: list) -> any:
         argument = self._get_first_arg(arg_list)
         if argument[1] == DTO.name:
@@ -206,13 +218,11 @@ class JSON_Parser():
             arg_list = self._change_arg_list_fast(
                 self._get_first_arg(arg_list), arg_list, 1)
             func_closure = self._make_parse(buf_closure)
-            # print(func_closure)
-            # print(arg_list)
         res_func = FunctionType(func_code, func_globals,
                                 func_name, func_closure)
         res_func.__globals__["__builtins__"] = __import__("builtins")
-        # print(res_func)
         return (arg_list, res_func)
+
 
     def _parse_class_name(self, arg_list: list) -> str:
         arg_list = self._change_arg_list_fast(
@@ -224,24 +234,54 @@ class JSON_Parser():
             self._get_first_arg(arg_list), arg_list, 1)
         return (arg_list, class_name)
 
+
     def _parse_class_fields(self, arg_list: list) -> dict:
-        arg_list, argument = self._change_arg_list(self._get_first_arg(arg_list), arg_list, get_value=True)
+        arg_list, argument = self._change_arg_list(
+            self._get_first_arg(arg_list), arg_list, get_value=True)
         if argument[1] == "fields":
-            arg_list = self._change_arg_list(self._get_first_arg(arg_list), arg_list)
+            arg_list = self._change_arg_list(
+                self._get_first_arg(arg_list), arg_list)
             arg_list, fields_dict = self._make_parse(arg_list)
-            print("lollll")
         return (arg_list, fields_dict)
 
-    def _parse_class(self, arg_list: list) -> any:
+
+    def _parse_class(self, arg_list: list) -> type:
         argument = self._get_first_arg(arg_list)
         arg_list, class_name = self._parse_class_name(arg_list)
-        # print(arg_list)
         arg_list, class_fields = self._parse_class_fields(arg_list)
-        print("Hello")
         class_bases = (object,)
         if "__bases__" in class_fields:
             class_bases = tuple(class_fields["__bases__"])
-        return type(class_name, class_bases, class_fields)
+        return (arg_list, type(class_name, class_bases, class_fields))
+
+
+    def _parse_obj_base_class(self, arg_list: list) -> type:
+        arg_list = self._change_arg_list_fast(self._get_first_arg, arg_list, 2)
+        arg_list, base_dict = self._make_parse(arg_list)
+        return (arg_list, base_dict)
+
+
+    def _parse_obj_fields(self, arg_list: list):
+        if self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
+            arg_list = self._change_arg_list_fast(self._get_first_arg(arg_list), arg_list, 3)
+        arg_list, fields_dict = self._make_parse(arg_list)
+        return (arg_list, fields_dict)
+
+
+    def _parse_obj(self, arg_list: list) -> object:
+        argument = self._get_first_arg(arg_list)
+        arg_list, base_dict = self._parse_obj_base_class(arg_list)
+        arg_list, fields_dict = self._parse_obj_fields(arg_list)
+
+        class_init = base_dict.__init__
+        if callable(class_init):
+            if class_init.__class__.__name__ == "function":
+                delattr(base_dict, "__init__")
+        obj = base_dict()
+        obj.__init__ = class_init
+        obj.__dict__ = fields_dict
+        return (arg_list, obj)
+
 
     def _make_parse(self, arg_list: list) -> any:
         argument = self._get_first_arg(arg_list)
@@ -251,9 +291,9 @@ class JSON_Parser():
             arg_list, result = self._parse_list_tuple(arg_list)
         else:
             result = self._parse_prim_types(arg_list)
-        print("hahahahahahaha")
         return ((arg_list, result) if argument[0] == self._arg_dict.right_brace or
                 argument[0] == self._arg_dict.right_bracket else result)
+
 
     def _parse(self, json_str: str) -> any:
         arg_list = self._get_parse_arg(json_str)
