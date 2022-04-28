@@ -65,10 +65,10 @@ class JSON_Serializer(BaseSerializer):
                 self._inspect_func_type(obj)
             elif inspect.isclass(obj):
                 self._inspect_class_type(obj)
-            elif isinstance(obj, object):
-                self._inspect_obj_type(obj)
             elif type(obj) == ModuleType:
                 self._inspect_obj_module(obj)
+            elif isinstance(obj, object):
+                self._inspect_obj_type(obj)
             self._add("}")
 
 
@@ -211,10 +211,10 @@ class JSON_Serializer(BaseSerializer):
 
 
     def _inspect_obj_module(self, obj_module):
-        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.model}",')
+        self._add(f'"{DTO.dto_type}": "{DTO_TYPE.module}",')
         self._add(f'"{DTO.name}": "{obj_module.__name__}",')
         self._add(f'"{DTO.fields}": ')
-        if self._is_std_module(obj_module):
+        if self._is_std_lib_module(obj_module):
             self._inspect(None)
         else:
             module_fields = self._get_module_fields(obj_module)
@@ -229,7 +229,7 @@ class JSON_Serializer(BaseSerializer):
         return module_fields
 
 
-    def is_std_lib_module(self, obj_module: ModuleType):
+    def _is_std_lib_module(self, obj_module: ModuleType):
         libs_path = sys.path[2]
         module_path = imp.find_module(obj_module.__name__)[1]
         if obj_module.__name__ in sys.builtin_module_names:

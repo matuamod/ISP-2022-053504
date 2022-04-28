@@ -15,7 +15,7 @@ class DTO_TYPE():
     obj_type = "obj"
     func = "func"
     code = "code"
-    model = "model"
+    module = "module"
     list = "list"
     dict = "dict"
     class_type = "type"

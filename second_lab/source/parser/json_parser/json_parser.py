@@ -1,5 +1,5 @@
 import re
-
+import imp
 from attr import fields_dict
 from source.dto.dto import DTO_TYPE, DTO
 from source.parser.parse_arguments import parse_json_arguments
@@ -128,13 +128,15 @@ class JSON_Parser():
             arg_list, result = self._parse_class(arg_list)
         elif dto_type == DTO_TYPE.obj_type:
             arg_list, result = self._parse_obj(arg_list)
+        elif dto_type == DTO_TYPE.module:
+            arg_list, result = self._parse_module(arg_list)
         return (arg_list, result)
 
 
     def _parse_dict(self, arg_list: list) -> dict:
         res_dict = {}
 
-        while self._get_first_arg(arg_list)[0] != self._arg_dict.left_brace:
+        while len(arg_list) != 0 and self._get_first_arg(arg_list)[0] != self._arg_dict.left_brace:
             # print(self._get_first_arg(arg_list)[0], self._get_first_arg(arg_list)[1])
             if len(self._get_first_arg(arg_list)) == 2:
                 arg_list, dict_key = self._change_arg_list(
@@ -149,9 +151,10 @@ class JSON_Parser():
                     value = self._make_parse([dict_value])
                 else:
                     arg_list, value = self._make_parse(arg_list)
-                if self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
-                    arg_list = self._change_arg_list(
-                        self._get_first_arg(arg_list), arg_list)
+                if len(arg_list) != 0:
+                    if self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
+                        arg_list = self._change_arg_list(
+                            self._get_first_arg(arg_list), arg_list)
                 res_dict[key] = value
             elif self._get_first_arg(arg_list)[0] == self._arg_dict.comma:
                 arg_list = self._change_arg_list(
@@ -224,18 +227,18 @@ class JSON_Parser():
         return (arg_list, res_func)
 
 
-    def _parse_class_name(self, arg_list: list) -> str:
+    def _parse_name(self, arg_list: list) -> str:
         arg_list = self._change_arg_list_fast(
             self._get_first_arg(arg_list), arg_list, 2)
         arg_list, tuple_name = self._change_arg_list(
             self._get_first_arg(arg_list), arg_list, get_value=True)
-        class_name = self._make_parse([tuple_name])
+        name = self._make_parse([tuple_name])
         arg_list = self._change_arg_list_fast(
             self._get_first_arg(arg_list), arg_list, 1)
-        return (arg_list, class_name)
+        return (arg_list, name)
 
 
-    def _parse_class_fields(self, arg_list: list) -> dict:
+    def _parse_fields(self, arg_list: list) -> dict:
         arg_list, argument = self._change_arg_list(
             self._get_first_arg(arg_list), arg_list, get_value=True)
         if argument[1] == "fields":
@@ -246,9 +249,8 @@ class JSON_Parser():
 
 
     def _parse_class(self, arg_list: list) -> type:
-        argument = self._get_first_arg(arg_list)
-        arg_list, class_name = self._parse_class_name(arg_list)
-        arg_list, class_fields = self._parse_class_fields(arg_list)
+        arg_list, class_name = self._parse_name(arg_list)
+        arg_list, class_fields = self._parse_fields(arg_list)
         class_bases = (object,)
         if "__bases__" in class_fields:
             class_bases = tuple(class_fields["__bases__"])
@@ -269,7 +271,6 @@ class JSON_Parser():
 
 
     def _parse_obj(self, arg_list: list) -> object:
-        argument = self._get_first_arg(arg_list)
         arg_list, base_dict = self._parse_obj_base_class(arg_list)
         arg_list, fields_dict = self._parse_obj_fields(arg_list)
 
@@ -281,6 +282,20 @@ class JSON_Parser():
         obj.__init__ = class_init
         obj.__dict__ = fields_dict
         return (arg_list, obj)
+
+
+    def _parse_module(self, arg_list: list) -> ModuleType:
+        arg_list, module_name = self._parse_name(arg_list)
+        arg_list, fields_dict = self._parse_fields(arg_list)
+
+        module = None
+        if fields_dict == None:
+            module = __import__(module_name)
+        else:
+            module = imp.new_module(module_name)
+            for field in fields_dict.items():
+                setattr(module,field[0],field[1])
+        return (arg_list, module)
 
 
     def _make_parse(self, arg_list: list) -> any:

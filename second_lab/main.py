@@ -4,6 +4,7 @@ from source import JSON_Parser
 import inspect
 import toml
 import yaml
+import module
 
 chip = b'\x00\x00\x00\x00\x00'
 
@@ -79,9 +80,11 @@ Autoidea = BMW_Group("Belarus", "Minsk")
 
 
 json_serializer = JSON_Serializer()
-json_serializer.dump(Autoidea, "all_data.json")
+json_serializer.dump(module, "all_data.json")
 buffer = json_serializer.load("all_data.json")
-buffer.buy_car("3-series")
+Puppy = buffer.Dog("Cherry")
+Puppy.make_voice()
+# buffer.buy_car("3-series")
 # Autoidea = buffer("Belarus", "Minsk")
 # Autoidea.buy_car("3-series")
 
