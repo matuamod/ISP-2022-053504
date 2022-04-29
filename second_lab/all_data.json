@@ -1,1 +1,90 @@
-{"dto_type": "module","name": "module","fields": {"dto_type": "dict","Dog": {"dto_type": "type","name": "Dog","fields": {"dto_type": "dict","__doc__": null,"__init__": {"dto_type": "func","name": "__init__","globals": {"dto_type": "dict"},"code": {"dto_type": "code","fields": {"dto_type": "dict","co_argcount": 2,"co_cellvars": [],"co_code": "7c017c005f0064005300","co_consts": [null],"co_filename": "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/module.py","co_firstlineno": 3,"co_flags": 67,"co_freevars": [],"co_kwonlyargcount": 0,"co_lnotab": "0001","co_name": "__init__","co_names": ["name"],"co_nlocals": 2,"co_posonlyargcount": 0,"co_stacksize": 2,"co_varnames": ["self","name"]}},"closure": "None"},"__module__": "module","make_voice": {"dto_type": "func","name": "make_voice","globals": {"dto_type": "dict"},"code": {"dto_type": "code","fields": {"dto_type": "dict","co_argcount": 1,"co_cellvars": [],"co_code": "740064018301010064005300","co_consts": [null,"gau-gau-gau"],"co_filename": "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/module.py","co_firstlineno": 6,"co_flags": 67,"co_freevars": [],"co_kwonlyargcount": 0,"co_lnotab": "0001","co_name": "make_voice","co_names": ["print"],"co_nlocals": 1,"co_posonlyargcount": 0,"co_stacksize": 2,"co_varnames": ["self"]}},"closure": "None"}}}}}
+{
+    "dto_type": "module",
+    "name": "module",
+    "fields": {
+        "dto_type": "dict",
+        "Dog": {
+            "dto_type": "type",
+            "name": "Dog",
+            "fields": {
+                "dto_type": "dict",
+                "__doc__": null,
+                "__init__": {
+                    "dto_type": "func",
+                    "name": "__init__",
+                    "globals": {
+                        "dto_type": "dict"
+                    },
+                    "code": {
+                        "dto_type": "code",
+                        "fields": {
+                            "dto_type": "dict",
+                            "co_argcount": 2,
+                            "co_cellvars": [],
+                            "co_code": "7c017c005f0064005300",
+                            "co_consts": [
+                                null
+                            ],
+                            "co_filename": "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/module.py",
+                            "co_firstlineno": 3,
+                            "co_flags": 67,
+                            "co_freevars": [],
+                            "co_kwonlyargcount": 0,
+                            "co_lnotab": "0001",
+                            "co_name": "__init__",
+                            "co_names": [
+                                "name"
+                            ],
+                            "co_nlocals": 2,
+                            "co_posonlyargcount": 0,
+                            "co_stacksize": 2,
+                            "co_varnames": [
+                                "self",
+                                "name"
+                            ]
+                        }
+                    },
+                    "closure": "None"
+                },
+                "__module__": "module",
+                "make_voice": {
+                    "dto_type": "func",
+                    "name": "make_voice",
+                    "globals": {
+                        "dto_type": "dict"
+                    },
+                    "code": {
+                        "dto_type": "code",
+                        "fields": {
+                            "dto_type": "dict",
+                            "co_argcount": 1,
+                            "co_cellvars": [],
+                            "co_code": "740064018301010064005300",
+                            "co_consts": [
+                                null,
+                                "gau-gau-gau"
+                            ],
+                            "co_filename": "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/module.py",
+                            "co_firstlineno": 6,
+                            "co_flags": 67,
+                            "co_freevars": [],
+                            "co_kwonlyargcount": 0,
+                            "co_lnotab": "0001",
+                            "co_name": "make_voice",
+                            "co_names": [
+                                "print"
+                            ],
+                            "co_nlocals": 1,
+                            "co_posonlyargcount": 0,
+                            "co_stacksize": 2,
+                            "co_varnames": [
+                                "self"
+                            ]
+                        }
+                    },
+                    "closure": "None"
+                }
+            }
+        }
+    }
+}

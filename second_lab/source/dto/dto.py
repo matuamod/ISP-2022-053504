@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from numpy import number
+
 @dataclass
 class DTO():
     dto_type = "dto_type"
@@ -19,4 +21,9 @@ class DTO_TYPE():
     list = "list"
     dict = "dict"
     class_type = "type"
+    number = "number"
+    str = "str"
+    bytes = "bytes"
+    bool = "bool"
+    none_type = "none"
     
