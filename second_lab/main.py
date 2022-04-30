@@ -32,6 +32,8 @@ tuple_spec = (
     335
 )
 
+digits = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
 dict_spec = {
     "BMW": 1,
     "Mercedes-Benz": 2,
@@ -40,7 +42,7 @@ dict_spec = {
 
 def car_method(v):
     speed = "Fast"
-    v = price + 200
+    v = price + v
     print(v)
 
 class BMW_Group():
@@ -50,6 +52,8 @@ class BMW_Group():
         self.city = city
     
     db = 1916
+
+    loveable = True
 
     models = [
         "1-series", "3-series", 
@@ -80,8 +84,8 @@ Autoidea = BMW_Group("Belarus", "Minsk")
 
 
 json_serializer = JSON_Serializer()
-json_serializer.dump(module, "all_data.json")
-# buffer = json_serializer.load("all_data.json")
+json_serializer.dump(BMW_Group, "all_data.json")
+buffer1 = json_serializer.load("all_data.json")
 # Puppy = buffer.Dog("Cherry")
 # Puppy.make_voice()
 # buffer.buy_car("3-series")
@@ -90,3 +94,6 @@ json_serializer.dump(module, "all_data.json")
 
 toml_serializer = TOML_Serializer()
 toml_serializer.dump(module, "all_data.toml")
+buffer2 = toml_serializer.load("all_data.toml")
+# car_shop = buffer2("Russia", "Sochi")
+# car_shop.buy_car("5-series")

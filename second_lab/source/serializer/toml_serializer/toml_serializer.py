@@ -26,7 +26,7 @@ class TOML_Serializer(BaseSerializer):
 
 
     def dumps(self, obj: any) -> str:
-        return self.make_serialize(obj)
+        return self._make_serialize(obj)
 
 
     def load(self, file_path: str) -> any:
@@ -37,17 +37,36 @@ class TOML_Serializer(BaseSerializer):
 
     def loads(self, s: str) -> any:
         obj_dict = toml.loads(s)
-        return self._make_parse(obj_dict)
+        return self._toml_parser._make_parse(obj_dict)
 
 
     def _add(self, obj: any) -> str:
         self._str = toml.dumps(obj)
 
 
-    def make_serialize(self, obj: any) -> str:
-        res_dict = self._inspect(obj)
+    def _make_serialize(self, obj: any) -> str:
+        primitive_types = (int, float, bool, str, bytes, NoneType) 
+        if type(obj) in primitive_types or obj == None:
+            res_dict = self._check_is_first(obj)
+        else:
+            res_dict = self._inspect(obj)
         self._add(res_dict)
         return (self._str)
+
+
+    def _check_is_first(self, prim_obj: any) -> dict:
+        prim_dict = {}
+        if type(prim_obj) in (int, float):
+            prim_dict[f'{DTO_TYPE.number}'] = prim_obj
+        elif type(prim_obj) == str:
+            prim_dict[f'{DTO_TYPE.str}'] = prim_obj
+        elif type(prim_obj) == bytes:
+            prim_dict[f'{DTO_TYPE.bytes}'] = prim_obj.hex()
+        elif type(prim_obj) == bool:   
+            prim_dict[f'{DTO_TYPE.bool}'] = prim_obj
+        elif type(prim_obj) == NoneType:
+            prim_dict[f'{DTO_TYPE.none_type}'] = "null"
+        return prim_dict
 
     
     def _inspect(self, obj: any):

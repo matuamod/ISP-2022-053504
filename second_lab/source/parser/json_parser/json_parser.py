@@ -312,5 +312,5 @@ class JSON_Parser():
 
     def _parse(self, json_str: str) -> any:
         arg_list = self._get_parse_arg(json_str)
-        arg_list, result = self._make_parse(arg_list)
+        result = self._make_parse(arg_list)
         return result

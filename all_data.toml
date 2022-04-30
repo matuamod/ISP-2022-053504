@@ -1,0 +1,43 @@
+dto_type = "func"
+name = "car_method"
+closure = "null"
+
+[globals]
+dto_type = "dict"
+price = 300
+
+[code]
+dto_type = "dict"
+co_argcount = 1
+co_code = "64017d017400640217007d0074017c008301010064005300"
+co_filename = "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/main.py"
+co_firstlineno = 43
+co_flags = 67
+co_kwonlyargcount = 0
+co_lnotab = "000104010801"
+co_name = "car_method"
+co_nlocals = 2
+co_posonlyargcount = 0
+co_stacksize = 2
+
+[code.co_cellvars]
+dto_type = "list"
+
+[code.co_consts]
+dto_type = "list"
+item_0 = "null"
+item_1 = "Fast"
+item_2 = 200
+
+[code.co_freevars]
+dto_type = "list"
+
+[code.co_names]
+dto_type = "list"
+item_0 = "price"
+item_1 = "print"
+
+[code.co_varnames]
+dto_type = "list"
+item_0 = "v"
+item_1 = "speed"
