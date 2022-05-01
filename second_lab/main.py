@@ -42,10 +42,10 @@ dict_spec = {
     "Audi": 3 
 }
 
-def car_method(v):
-    speed = "Fast"
-    v = price + v
-    print(v)
+def sum_method(a, b):
+    speed_alg = "Fast"
+    c = a + b
+    print(c)
 
 class BMW_Group():
 
@@ -88,18 +88,24 @@ Autoidea = BMW_Group("Belarus", "Minsk")
 json_serializer = JSON_Serializer()
 json_serializer.dump(BMW_Group, "all_data.json")
 buffer1 = json_serializer.load("all_data.json")
-# Puppy = buffer.Dog("Cherry")
+# Puppy = buffer1.Dog("Cherry")
 # Puppy.make_voice()
 # buffer.buy_car("3-series")
 # Autoidea = buffer("Belarus", "Minsk")
 # Autoidea.buy_car("3-series")
 
 toml_serializer = TOML_Serializer()
-toml_serializer.dump(module, "all_data.toml")
+toml_serializer.dump(dict_spec, "all_data.toml")
 buffer2 = toml_serializer.load("all_data.toml")
 # car_shop = buffer2("Russia", "Sochi")
 # car_shop.buy_car("5-series")
+# Puppy = buffer2.Dog("Cherry")
+# Puppy.make_voice()
 
 yaml_serializer = YAML_Serializer()
 yaml_serializer.dump(module, "all_data.yaml")
-# buffer3 = yaml_serializer.load("all_data.yaml")
+buffer3 = yaml_serializer.load("all_data.yaml")
+# car_shop = buffer3("Russia", "Sochi")
+# car_shop.buy_car("7-series")
+# Puppy = buffer3.Dog("Cherry")
+# Puppy.make_voice()

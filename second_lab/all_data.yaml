@@ -1,12 +1,20 @@
 dto_type: module
+name: module
 fields:
+  dto_type: dict
   Dog:
     dto_type: type
+    name: Dog
     fields:
+      dto_type: dict
       __doc__: null
       __init__:
-        closure: null
+        dto_type: func
+        name: __init__
+        globals:
+          dto_type: dict
         code:
+          dto_type: dict
           co_argcount: 2
           co_cellvars: []
           co_code: !!binary |
@@ -29,13 +37,15 @@ fields:
           co_varnames:
           - self
           - name
-        dto_type: func
-        globals: {}
-        name: __init__
+        closure: null
       __module__: module
       make_voice:
-        closure: null
+        dto_type: func
+        name: make_voice
+        globals:
+          dto_type: dict
         code:
+          dto_type: dict
           co_argcount: 1
           co_cellvars: []
           co_code: !!binary |
@@ -58,8 +68,4 @@ fields:
           co_stacksize: 2
           co_varnames:
           - self
-        dto_type: func
-        globals: {}
-        name: make_voice
-    name: Dog
-name: module
+        closure: null

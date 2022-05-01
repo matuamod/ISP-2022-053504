@@ -68,6 +68,7 @@ class YAML_Serializer(BaseSerializer):
 
     def _inspect_dict(self, dict_obj: dict) -> dict:
         res_dict = {}
+        res_dict[f'{DTO.dto_type}'] = f'{DTO_TYPE.dict}'
         for item in dict_obj.items():
             res_dict[self._inspect_types(item[0])] = self._inspect_types(item[1])
         return res_dict
@@ -116,5 +117,5 @@ class YAML_Serializer(BaseSerializer):
     
     def _make_serialize(self, obj: any) -> str:
         res_obj = self._inspect_types(obj)
-        return yaml.dump(res_obj)
+        return yaml.dump(res_obj, sort_keys=False)
         
