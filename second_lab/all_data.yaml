@@ -1,0 +1,65 @@
+dto_type: module
+fields:
+  Dog:
+    dto_type: type
+    fields:
+      __doc__: null
+      __init__:
+        closure: null
+        code:
+          co_argcount: 2
+          co_cellvars: []
+          co_code: !!binary |
+            fAF8AF8AZABTAA==
+          co_consts:
+          - null
+          co_filename: /home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/module.py
+          co_firstlineno: 3
+          co_flags: 67
+          co_freevars: []
+          co_kwonlyargcount: 0
+          co_lnotab: !!binary |
+            AAE=
+          co_name: __init__
+          co_names:
+          - name
+          co_nlocals: 2
+          co_posonlyargcount: 0
+          co_stacksize: 2
+          co_varnames:
+          - self
+          - name
+        dto_type: func
+        globals: {}
+        name: __init__
+      __module__: module
+      make_voice:
+        closure: null
+        code:
+          co_argcount: 1
+          co_cellvars: []
+          co_code: !!binary |
+            dABkAYMBAQBkAFMA
+          co_consts:
+          - null
+          - gau-gau-gau
+          co_filename: /home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/module.py
+          co_firstlineno: 6
+          co_flags: 67
+          co_freevars: []
+          co_kwonlyargcount: 0
+          co_lnotab: !!binary |
+            AAE=
+          co_name: make_voice
+          co_names:
+          - print
+          co_nlocals: 1
+          co_posonlyargcount: 0
+          co_stacksize: 2
+          co_varnames:
+          - self
+        dto_type: func
+        globals: {}
+        name: make_voice
+    name: Dog
+name: module

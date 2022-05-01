@@ -1,6 +1,6 @@
 from sympy import sec
-from source import JSON_Serializer, TOML_Serializer
-from source import JSON_Parser, TOML_Parser
+from source import JSON_Serializer, TOML_Serializer, YAML_Serializer
+from source import JSON_Parser, TOML_Parser, YAML_Parser
 import inspect
 import toml
 import yaml
@@ -33,6 +33,8 @@ tuple_spec = (
 )
 
 digits = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+hard = [{"Matua": 1}, {"Kefir": 2}, {"Maksus": 3}]
 
 dict_spec = {
     "BMW": 1,
@@ -97,3 +99,7 @@ toml_serializer.dump(module, "all_data.toml")
 buffer2 = toml_serializer.load("all_data.toml")
 # car_shop = buffer2("Russia", "Sochi")
 # car_shop.buy_car("5-series")
+
+yaml_serializer = YAML_Serializer()
+yaml_serializer.dump(module, "all_data.yaml")
+# buffer3 = yaml_serializer.load("all_data.yaml")
