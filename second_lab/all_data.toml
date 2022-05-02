@@ -1,4 +1,166 @@
+dto_type = "obj"
+
+[base_class]
+dto_type = "type"
+name = "BMW_Group"
+
+[fields]
 dto_type = "dict"
-BMW = 1
-Mercedes-Benz = 2
-Audi = 3
+country = "Belarus"
+city = "Minsk"
+
+[base_class.fields]
+dto_type = "dict"
+__doc__ = "null"
+__module__ = "__main__"
+db = 1916
+loveable = true
+
+[base_class.fields.__init__]
+dto_type = "func"
+name = "__init__"
+closure = "null"
+
+[base_class.fields.buy_car]
+dto_type = "func"
+name = "buy_car"
+closure = "null"
+
+[base_class.fields.get_bought_car]
+dto_type = "func"
+name = "get_bought_car"
+closure = "null"
+
+[base_class.fields.models]
+dto_type = "list"
+item_0 = "1-series"
+item_1 = "3-series"
+item_2 = "5-series"
+item_3 = "7-series"
+
+[base_class.fields.__init__.globals]
+dto_type = "dict"
+
+[base_class.fields.__init__.code]
+dto_type = "dict"
+co_argcount = 3
+co_code = "7c017c005f007c027c005f0164005300"
+co_filename = "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/make_file_content.py"
+co_firstlineno = 52
+co_flags = 67
+co_kwonlyargcount = 0
+co_lnotab = "00010601"
+co_name = "__init__"
+co_nlocals = 3
+co_posonlyargcount = 0
+co_stacksize = 2
+
+[base_class.fields.buy_car.globals]
+dto_type = "dict"
+
+[base_class.fields.buy_car.code]
+dto_type = "dict"
+co_argcount = 2
+co_code = "7c017c006a00760072367c017c006a00640119006b02720f64027d026e1d7c017c006a00640319006b02721964047d026e137c017c006a00640519006b02722364067d026e097c017c006a00640719006b02722c64087d027c00a0017c017c02a10201007c017c0266025300740264098301010064017d027c017c0266025300"
+co_filename = "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/make_file_content.py"
+co_firstlineno = 65
+co_flags = 67
+co_kwonlyargcount = 0
+co_lnotab = "00010a010e0106010e0106010e0106010e0104010c0408fe08010401"
+co_name = "buy_car"
+co_nlocals = 3
+co_posonlyargcount = 0
+co_stacksize = 4
+
+[base_class.fields.get_bought_car.globals]
+dto_type = "dict"
+
+[base_class.fields.get_bought_car.code]
+dto_type = "dict"
+co_argcount = 3
+co_code = "7c0264016b047211740064027c019b0064037c029b0064049d05830101006400530064005300"
+co_filename = "/home/matuamod/Documents/Repositories/ISP-2022-053504/second_lab/make_file_content.py"
+co_firstlineno = 81
+co_flags = 67
+co_kwonlyargcount = 0
+co_lnotab = "000108011aff"
+co_name = "get_bought_car"
+co_nlocals = 3
+co_posonlyargcount = 0
+co_stacksize = 6
+
+[base_class.fields.__init__.code.co_cellvars]
+dto_type = "list"
+
+[base_class.fields.__init__.code.co_consts]
+dto_type = "list"
+item_0 = "null"
+
+[base_class.fields.__init__.code.co_freevars]
+dto_type = "list"
+
+[base_class.fields.__init__.code.co_names]
+dto_type = "list"
+item_0 = "country"
+item_1 = "city"
+
+[base_class.fields.__init__.code.co_varnames]
+dto_type = "list"
+item_0 = "self"
+item_1 = "country"
+item_2 = "city"
+
+[base_class.fields.buy_car.code.co_cellvars]
+dto_type = "list"
+
+[base_class.fields.buy_car.code.co_consts]
+dto_type = "list"
+item_0 = "null"
+item_1 = 0
+item_2 = 45000
+item_3 = 1
+item_4 = 55000
+item_5 = 2
+item_6 = 70000
+item_7 = 3
+item_8 = 95000
+item_9 = "No_such_car_in_autohaus"
+
+[base_class.fields.buy_car.code.co_freevars]
+dto_type = "list"
+
+[base_class.fields.buy_car.code.co_names]
+dto_type = "list"
+item_0 = "models"
+item_1 = "get_bought_car"
+item_2 = "print"
+
+[base_class.fields.buy_car.code.co_varnames]
+dto_type = "list"
+item_0 = "self"
+item_1 = "car_type"
+item_2 = "price"
+
+[base_class.fields.get_bought_car.code.co_cellvars]
+dto_type = "list"
+
+[base_class.fields.get_bought_car.code.co_consts]
+dto_type = "list"
+item_0 = "null"
+item_1 = 0
+item_2 = "New_customer_bought_"
+item_3 = "_for_"
+item_4 = "_dollars"
+
+[base_class.fields.get_bought_car.code.co_freevars]
+dto_type = "list"
+
+[base_class.fields.get_bought_car.code.co_names]
+dto_type = "list"
+item_0 = "print"
+
+[base_class.fields.get_bought_car.code.co_varnames]
+dto_type = "list"
+item_0 = "self"
+item_1 = "car_type"
+item_2 = "price"
